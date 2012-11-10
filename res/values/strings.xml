@@ -1,0 +1,29 @@
+<resources>
+
+    <string name="app_name">3Pi Robot - Bluetooth Comms</string>
+        
+    <!--  Events  -->
+    <string name="BluetoothDeviceConnectedEvent">BluetoothDeviceConnected</string>
+    <string name="BluetoothDeviceConnectedEventDeviceNamePropertyKey">DeviceName</string>
+    
+    <!-- Find robot activity -->
+    <string name="FindRobotCommand">Find Robot &#8230;</string>
+    <string name="FindRobotButtonText">Go!</string>
+	<string name="NoDeviceConnected">No Device Connected</string>
+	<string name="DisconnectFromDeviceButton">Disconnect from this device</string>
+    
+    <!-- Select Previous BT Device  -->
+    <string name="SelectPreviousBtDeviceTitle">Any of these?</string>
+    <string name="SelectPreviousBtDeviceExplanation">These devices have previously been paired with this device. Is your robot connected to any of them?</string>
+    <string name="SelectPreviousBtDeviceScanForNewDevicesOption">No, scan for new devices  &#8230;</string>
+    <string name="SelectBtDeviceWhenFriendlyNameIsNull">&lt;Unknown&gt;</string>
+    <!--   -->
+    
+    <!--  Control Robot Fragment -->
+    <string name="ControlRobotForward">Forward</string>
+    <string name="ControlRobotBackward">Back</string>
+    
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+
+</resources>

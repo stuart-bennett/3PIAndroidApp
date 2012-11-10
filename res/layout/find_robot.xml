@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0098CC"
+    android:orientation="horizontal"
+    android:padding="10dp" >
+
+    <LinearLayout
+        android:id="@+id/ConnectedRobotLinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="10dp" >
+
+        <TextView
+            android:id="@+id/ConnectedBtDeviceName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:paddingTop="7dp"
+            android:text="@string/NoDeviceConnected"
+            android:textColor="@color/FindRobotTextWhite"
+            android:textSize="32dp"
+            android:typeface="normal" />
+        
+        <TextView android:id="@+id/ConnectedBtDeviceTimeConnectedAt"
+	        	  android:layout_width="wrap_content"
+	        	  android:layout_height="wrap_content" />
+        
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/FindRobotLinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/FindRobotText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/FindRobotCommand"
+            android:textColor="@color/FindRobotTextWhite" />
+	    
+	    <Button android:id="@+id/FindRobotButton"
+	        	android:layout_width="wrap_content"
+	        	android:layout_height="wrap_content"
+	        	android:text="@string/FindRobotButtonText"
+	        	android:onClick="onFindRobotButtonClick" />
+        
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/DisconnectDeviceLinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+	    
+	    <Button android:id="@+id/DisconnectFromDeviceButton"
+	        	android:layout_width="wrap_content"
+	        	android:layout_height="wrap_content"
+	        	android:text="@string/DisconnectFromDeviceButton"
+	        	android:onClick="onDisconnectFromDeviceButton" />
+        
+    </LinearLayout>
+    
+        
+</LinearLayout>
