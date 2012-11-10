@@ -6,11 +6,20 @@
     <Button android:id="@+id/ControlRobotForwardButton"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"        
-        	android:text="@string/ControlRobotForward" />
+        	android:text="@string/ControlRobotForward"
+        	android:onClick="onControlRobotForwardButton" />
     
     <Button android:id="@+id/ControlRobotBackwardButton"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content" 
-        	android:text="@string/ControlRobotBackward" />
+        	android:text="@string/ControlRobotBackward"
+        	android:onClick="onControlRobotBackwardButton" />
+    
+    <Button android:id="@+id/ControlRobotCalibrateButton"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content" 
+        	android:text="Calibrate"
+        	android:onClick="onControlRobotCalibrateButton" />
+    
 
 </LinearLayout>

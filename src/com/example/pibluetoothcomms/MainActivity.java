@@ -1,5 +1,7 @@
 package com.example.pibluetoothcomms;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 
 import android.os.Bundle;
@@ -36,6 +38,7 @@ public class MainActivity extends FragmentActivity
 	
 	// Devices discovered during bluetooth discovery
 	private Set<BluetoothDevice> mDiscoveredBtDevices;
+	private RobotController mRobotController;
 	
 	// Handles bluetooth device discovery
 	private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -68,6 +71,19 @@ public class MainActivity extends FragmentActivity
     	FragmentManager manager = this.getSupportFragmentManager();
     	FindRobotFragment findRobotFragment = (FindRobotFragment)manager.findFragmentById(R.id.find_robot_fragment);
     	findRobotFragment.BluetoothDeviceConnected(nameOfDeviceConnectedTo);
+    	this.showRobotControls();
+    	this.mRobotController = new RobotController(this.mConnectionThread.getSocket());
+    }
+    
+    /**
+     * Shows the controls for the robot
+     */
+    private void showRobotControls() {
+    	FragmentManager manager = this.getSupportFragmentManager();
+    	FragmentTransaction ft = manager.beginTransaction();
+    	Fragment controlRobotFragment = manager.findFragmentById(R.id.control_robot_fragment);
+    	ft.show(controlRobotFragment);
+    	ft.commit();  
     }
     
     @Override
@@ -106,6 +122,63 @@ public class MainActivity extends FragmentActivity
         this.registerReceiver(this.mBroadcastReceiver, filter);    	
     }
 
+    public void onControlRobotForwardButton(View v) {
+    	this.mRobotController.moveForward();
+    }
+    
+	public void onControlRobotBackwardButton(View v) {    
+    	this.mRobotController.stop();	    
+	}
+	
+	public void onControlRobotCalibrateButton(View v) {
+		this.mRobotController.calibrate();
+	}
+
+	/**
+	 * Responsible for sending communication to serial reader on the 3Pi
+	 * @author Stu
+	 *
+	 */
+	public class RobotController {
+				
+		private final BluetoothSocket mSocket;
+		private OutputStream mOutStream = null;
+		
+		private final Map<String, byte[]> mCommandMap = new HashMap<String, byte[]>() {{
+			put("START_LEFT_MOVING_FORWARD", new byte[] { (byte) 0xC1 });
+			put("START_RIGHT_MOVING_FORWARD", new byte[] { (byte) 0xC5 });
+			put("STOP", new byte[] { (byte) 0xBC });			
+			put("CALIBRATE", new byte[] { (byte) 0xBA });
+		}};
+		
+		public RobotController(BluetoothSocket socket) {
+			this.mSocket = socket;
+			try {
+				this.mOutStream = socket.getOutputStream();				
+			}
+			catch (Exception e) { e.printStackTrace(); }
+		}
+		
+		public void moveForward() {
+			this.writeToOutputStream(this.mCommandMap.get("START_LEFT_MOVING_FORWARD"));
+			this.writeToOutputStream(this.mCommandMap.get("START_RIGHT_MOVING_FORWARD"));		
+		}
+		
+		public void stop() {
+			this.writeToOutputStream(this.mCommandMap.get("STOP"));
+		}
+		
+		public void calibrate() {
+			this.writeToOutputStream(this.mCommandMap.get("CALIBRATE"));
+		}
+		
+		private void writeToOutputStream(byte[] data) {
+			try {
+				this.mOutStream.write(data);
+			} catch (IOException e) { e.printStackTrace(); }
+		}
+	}
+	
     public void onFindRobotButtonClick(View v) {
         this.initialiseFragments();
     	this.doFindRobot();

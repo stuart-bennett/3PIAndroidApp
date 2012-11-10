@@ -60,12 +60,6 @@ public class EstablishBluetoothConnectionThread extends Thread {
 			} catch (Exception innerE) { innerE.printStackTrace(); }
 			return;
 		}
-		
-		try {
-			this.mOutStream = this.mBtSocket.getOutputStream();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
 		Bundle bundle = new Bundle();
 		bundle.putString("EventName", "BluetoothDeviceConnected");
@@ -74,17 +68,14 @@ public class EstablishBluetoothConnectionThread extends Thread {
 		msg.setData(bundle);
 		this.mBtConnectionHandler.sendMessage(msg);
 	}
-
-	public void write(String data) {
+	
+	public boolean hasSocketBeenEstablished() {
+		return this.mBtAdapter != null;
 	}
 	
-	public void write(byte[] data) {
-		try {
-			this.mOutStream.write(data);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}	
+	public BluetoothSocket getSocket() {
+		return this.mBtSocket;
+	}
 	
 	public void cancel() {
 		try {
