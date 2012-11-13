@@ -133,7 +133,15 @@ public class MainActivity extends FragmentActivity
 	public void onControlRobotCalibrateButton(View v) {
 		this.mRobotController.calibrate();
 	}
+	
+	public void onControlRobotTurnLeftButton (View v) {
+		this.mRobotController.turnLeft();
+	}
 
+	public void onControlRobotTurnRightButton (View v) {
+		this.mRobotController.turnRight();
+	}
+	
 	/**
 	 * Responsible for sending communication to serial reader on the 3Pi
 	 * @author Stu
@@ -145,8 +153,11 @@ public class MainActivity extends FragmentActivity
 		private OutputStream mOutStream = null;
 		
 		private final Map<String, byte[]> mCommandMap = new HashMap<String, byte[]>() {{
-			put("START_LEFT_MOVING_FORWARD", new byte[] { (byte) 0xC1 });
-			put("START_RIGHT_MOVING_FORWARD", new byte[] { (byte) 0xC5 });
+			put("START_LEFT_MOVING_FORWARD", new byte[] { (byte) 0xC1, (byte) 0x10 });
+			put("START_RIGHT_MOVING_FORWARD", new byte[] { (byte) 0xC5, (byte) 0x10 });
+			put("STOP_LEFT_MOVING_FORWARD", new byte[] { (byte) 0xC1, (byte) 0x00 });
+			put("STOP_RIGHT_MOVING_FORWARD", new byte[] { (byte) 0xC5, (byte) 0x00 });
+			
 			put("STOP", new byte[] { (byte) 0xBC });			
 			put("CALIBRATE", new byte[] { (byte) 0xBA });
 		}};
@@ -163,6 +174,14 @@ public class MainActivity extends FragmentActivity
 			this.writeToOutputStream(this.mCommandMap.get("START_LEFT_MOVING_FORWARD"));
 			this.writeToOutputStream(this.mCommandMap.get("START_RIGHT_MOVING_FORWARD"));		
 		}
+		
+		public void turnLeft() {
+			this.writeToOutputStream(this.mCommandMap.get("STOP_RIGHT_MOVING_FORWARD"));
+		}
+		
+		public void turnRight() {
+			this.writeToOutputStream(this.mCommandMap.get("STOP_LEFT_MOVING_FORWARD"));
+		}		
 		
 		public void stop() {
 			this.writeToOutputStream(this.mCommandMap.get("STOP"));

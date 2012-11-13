@@ -14,11 +14,24 @@
         	android:layout_height="wrap_content" 
         	android:text="@string/ControlRobotBackward"
         	android:onClick="onControlRobotBackwardButton" />
+
+    <Button android:id="@+id/ControlRobotTurnLeftButton"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content" 
+        	android:text="@string/ControlRobotTurnLeft"
+        	android:onClick="onControlRobotTurnLeftButton" />
+    
+    <Button android:id="@+id/ControlRobotTurnRightButton"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content" 
+        	android:text="@string/ControlRobotTurnRight"
+        	android:onClick="onControlRobotTurnRightButton" />
+    
     
     <Button android:id="@+id/ControlRobotCalibrateButton"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content" 
-        	android:text="Calibrate"
+        	android:text="@string/ControlRobotCalibrate"
         	android:onClick="onControlRobotCalibrateButton" />
     
 
