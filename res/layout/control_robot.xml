@@ -27,12 +27,35 @@
         	android:text="@string/ControlRobotTurnRight"
         	android:onClick="onControlRobotTurnRightButton" />
     
-    
     <Button android:id="@+id/ControlRobotCalibrateButton"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content" 
         	android:text="@string/ControlRobotCalibrate"
         	android:onClick="onControlRobotCalibrateButton" />
+
+    <RadioGroup android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+        		android:orientation="horizontal">
+        
+        <RadioButton android:id="@+id/ControlRobotSpeedSlowRadio"
+            		 android:layout_width="wrap_content"
+            		 android:layout_height="wrap_content"
+            		 android:text="@string/ControlRobotSpeedSlowRadio"
+            		 android:onClick="onControlRobotSpeedSlowRadioClicked" />
+
+        <RadioButton android:id="@+id/ControlRobotSpeedMediumRadio"
+            		 android:layout_width="wrap_content"
+            		 android:layout_height="wrap_content"
+            		 android:text="@string/ControlRobotSpeedMediumRadio"
+            		 android:onClick="onControlRobotSpeedMediumRadioClicked" />
+        
+        <RadioButton android:id="@+id/ControlRobotSpeedFastRadio"
+            		 android:layout_width="wrap_content"
+            		 android:layout_height="wrap_content"
+            		 android:text="@string/ControlRobotSpeedFastRadio"
+            		 android:onClick="onControlRobotSpeedFastRadioClicked" />
+        
+    </RadioGroup>
     
 
 </LinearLayout>

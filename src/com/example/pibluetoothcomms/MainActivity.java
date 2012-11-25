@@ -25,20 +25,26 @@ import android.content.IntentFilter;
 import android.view.Menu;
 import android.view.View;
 
+import com.example.pibluetoothcomms.ThreePiController.MovementSpeed;
 import com.example.pibluetoothcomms.DialogFragments.SelectBluetoothDeviceDialogFragment;
 import com.example.pibluetoothcomms.Exceptions.*;
 import com.example.pibluetoothcomms.Fragments.FindRobotFragment;
 import com.example.pibluetoothcomms.Threading.EstablishBluetoothConnectionThread;
 
 public class MainActivity extends FragmentActivity 
-						  implements SelectBluetoothDeviceDialogListener {
+	implements SelectBluetoothDeviceDialogListener {
 
 	private RobotFinder mRobotFinder;
 	private EstablishBluetoothConnectionThread mConnectionThread;
 	
 	// Devices discovered during bluetooth discovery
 	private Set<BluetoothDevice> mDiscoveredBtDevices;
-	private RobotController mRobotController;
+	
+	// For managing comms with the 3Pi once connected
+	private ThreePiController mRobotController;
+
+	// The find robot fragment
+	private FindRobotFragment mFindRobotFragment;
 	
 	// Handles bluetooth device discovery
 	private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -46,10 +52,9 @@ public class MainActivity extends FragmentActivity
     	public void onReceive(Context context, Intent intent) {
     		String action = intent.getAction();	
     		if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-    			BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-    			mDiscoveredBtDevices.add(device);
-    			System.out.println(String.format("Found device: '%s' '%s'", device.getName(), device.getAddress()));
-    			
+    			BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);	
+    			mFindRobotFragment.DeviceDiscovered(device);
+    			// mDiscoveredBtDevices.add(device);			
     		}
     	}
     };
@@ -72,7 +77,7 @@ public class MainActivity extends FragmentActivity
     	FindRobotFragment findRobotFragment = (FindRobotFragment)manager.findFragmentById(R.id.find_robot_fragment);
     	findRobotFragment.BluetoothDeviceConnected(nameOfDeviceConnectedTo);
     	this.showRobotControls();
-    	this.mRobotController = new RobotController(this.mConnectionThread.getSocket());
+    	this.mRobotController = new ThreePiController(this.mConnectionThread.getSocket());
     }
     
     /**
@@ -93,6 +98,8 @@ public class MainActivity extends FragmentActivity
         
         this.mDiscoveredBtDevices = new HashSet<BluetoothDevice>();
         this.registerBluetoothDiscoveryIntent();
+    	FragmentManager manager = this.getSupportFragmentManager();
+    	this.mFindRobotFragment = (FindRobotFragment)manager.findFragmentById(R.id.find_robot_fragment);        
         this.initialiseFragments();
     }
     
@@ -102,6 +109,25 @@ public class MainActivity extends FragmentActivity
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }     
+    
+    /**
+     * Called when a Bluetooth device selection dialog is used to specify a device
+     */
+    public void onDialogDeviceSelected(String nameOfSelectedDevice) {    	
+    	if (nameOfSelectedDevice.equalsIgnoreCase(getString(R.string.SelectPreviousBtDeviceScanForNewDevicesOption))) {
+    		// Prompt for device discovery
+    		this.doDiscoveryOfDevices();
+    	}
+    	else {
+    		BluetoothDevice device = this.mFindRobotFragment.FindDevice(nameOfSelectedDevice);
+    		
+    		if (device == null) {
+    			throw new RuntimeException(String.format("Could not find device '%s'", nameOfSelectedDevice));
+    		}
+    		
+    		this.doConnectToDevice(device);
+    	}
+    }	    
     
     /** 
      * Helper method for initialising UI state when the activity first loads
@@ -121,7 +147,7 @@ public class MainActivity extends FragmentActivity
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.registerReceiver(this.mBroadcastReceiver, filter);    	
     }
-
+ 
     public void onControlRobotForwardButton(View v) {
     	this.mRobotController.moveForward();
     }
@@ -142,62 +168,18 @@ public class MainActivity extends FragmentActivity
 		this.mRobotController.turnRight();
 	}
 	
-	/**
-	 * Responsible for sending communication to serial reader on the 3Pi
-	 * @author Stu
-	 *
-	 */
-	public class RobotController {
-				
-		private final BluetoothSocket mSocket;
-		private OutputStream mOutStream = null;
-		
-		private final Map<String, byte[]> mCommandMap = new HashMap<String, byte[]>() {{
-			put("START_LEFT_MOVING_FORWARD", new byte[] { (byte) 0xC1, (byte) 0x10 });
-			put("START_RIGHT_MOVING_FORWARD", new byte[] { (byte) 0xC5, (byte) 0x10 });
-			put("STOP_LEFT_MOVING_FORWARD", new byte[] { (byte) 0xC1, (byte) 0x00 });
-			put("STOP_RIGHT_MOVING_FORWARD", new byte[] { (byte) 0xC5, (byte) 0x00 });
-			
-			put("STOP", new byte[] { (byte) 0xBC });			
-			put("CALIBRATE", new byte[] { (byte) 0xBA });
-		}};
-		
-		public RobotController(BluetoothSocket socket) {
-			this.mSocket = socket;
-			try {
-				this.mOutStream = socket.getOutputStream();				
-			}
-			catch (Exception e) { e.printStackTrace(); }
-		}
-		
-		public void moveForward() {
-			this.writeToOutputStream(this.mCommandMap.get("START_LEFT_MOVING_FORWARD"));
-			this.writeToOutputStream(this.mCommandMap.get("START_RIGHT_MOVING_FORWARD"));		
-		}
-		
-		public void turnLeft() {
-			this.writeToOutputStream(this.mCommandMap.get("STOP_RIGHT_MOVING_FORWARD"));
-		}
-		
-		public void turnRight() {
-			this.writeToOutputStream(this.mCommandMap.get("STOP_LEFT_MOVING_FORWARD"));
-		}		
-		
-		public void stop() {
-			this.writeToOutputStream(this.mCommandMap.get("STOP"));
-		}
-		
-		public void calibrate() {
-			this.writeToOutputStream(this.mCommandMap.get("CALIBRATE"));
-		}
-		
-		private void writeToOutputStream(byte[] data) {
-			try {
-				this.mOutStream.write(data);
-			} catch (IOException e) { e.printStackTrace(); }
-		}
+	public void onControlRobotSpeedSlowRadioClicked(View v) {
+		this.mRobotController.setSpeed(MovementSpeed.SLOW);
 	}
 	
+	public void onControlRobotSpeedMediumRadioClicked(View v) {
+		this.mRobotController.setSpeed(MovementSpeed.MEDIUM);
+	}
+
+	public void onControlRobotSpeedFastRadioClicked(View v) {
+		this.mRobotController.setSpeed(MovementSpeed.FAST);
+	}
+			
     public void onFindRobotButtonClick(View v) {
         this.initialiseFragments();
     	this.doFindRobot();
@@ -213,6 +195,7 @@ public class MainActivity extends FragmentActivity
     // Confirms if Bluetooth is active. Also prompts to enable if disabled
     private void doFindRobot() {
     	
+    	// Is bluetooth enabled on the device?
     	UiActionResult startBluetoothResult = this.checkBluetoothAndPromptIfNotEnabled();
     	if (!startBluetoothResult.WasActionSuccessful()) {
     		AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -220,23 +203,13 @@ public class MainActivity extends FragmentActivity
     		builder.show();
     		return;
     	}
-    
-    	this.promptToConnectToPreviouslyPairedDevices();
+    	
+    	FragmentManager manager = this.getSupportFragmentManager();
+    	FindRobotFragment findRobotFragment = (FindRobotFragment)manager.findFragmentById(R.id.find_robot_fragment);
+    	findRobotFragment.setPreviouslyPairedDevices(this.mRobotFinder.getPreviouslyPairedDevices());
+    	findRobotFragment.promptToConnectToPreviouslyPairedDevices();
     }
     
-    /**
-     * Prompts the user to select a previously known device before initiating an 
-     * potentially unnecessary, resource-expensive discovery process
-     */
-    private void promptToConnectToPreviouslyPairedDevices() {	
-    	Set<BluetoothDevice> previouslyPaired = this.mRobotFinder.getPreviouslyPairedDevices();
-    	if (previouslyPaired.size() > 0) {
-        	this.mDiscoveredBtDevices = previouslyPaired;    		
-    		DialogFragment dialog = new SelectBluetoothDeviceDialogFragment(previouslyPaired);
-    		dialog.show(getSupportFragmentManager(), "SelectBluetoothDeviceDialogFragment");
-    	}
-    }
-
     /**
      * 
      * @return True if Bluetooth setup went ok, false if not
@@ -250,38 +223,13 @@ public class MainActivity extends FragmentActivity
     		return new UiActionResult(false, "You do not have Bluetooth available on your device! This application required a Bluetooth enabled device");
     	}
     	catch (BluetoothNotEnabledException e) {
+    		// If the device is bluetooth capable then we just need to turn it on...
     		e.printStackTrace();
 			Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 			this.startActivityForResult(enableBluetoothIntent, 1);
-			return new UiActionResult(false, "Bluetooth could not be enabled on your device. Please try manually enabling Bluetooth and retrying");
     	}
     	
     	return new UiActionResult(true);
-    }
-    
-    /**
-     * Called when a Bluetooth device selection dialog is used to specify a device
-     */
-    public void onDialogDeviceSelected(String nameOfSelectedDevice) {    	
-    	if (nameOfSelectedDevice.equalsIgnoreCase(getString(R.string.SelectPreviousBtDeviceScanForNewDevicesOption))) {
-    		this.doDiscoveryOfDevices();
-    	}
-    	else {
-    		BluetoothDevice device = null;
-    		for (BluetoothDevice d : this.mDiscoveredBtDevices) {
-    			if (
-    				d.getName() == null && nameOfSelectedDevice.equals(getString(R.string.SelectBtDeviceWhenFriendlyNameIsNull)) ||
-    				d.getName().equals(nameOfSelectedDevice)) {	
-    				device = d;
-    			}
-    		}
-    		
-    		if (device == null) {
-    			throw new RuntimeException(String.format("Could not find device '%s'", nameOfSelectedDevice));
-    		}
-    		
-    		this.doConnectToDevice(device);
-    	}
     }
     
     /**
@@ -304,8 +252,7 @@ public class MainActivity extends FragmentActivity
     private void doDiscoveryOfDevices() {
     	
 		// this.mDiscoveredBtDevices.clear();
-		this.mRobotFinder.startDiscovery();
-		
+		this.mRobotFinder.startDiscovery();	
 		final ProgressDialog dialog = ProgressDialog.show(MainActivity.this, "", "Searching for devices. Please wait", true);
 		
 		Timer timer = new Timer();
@@ -313,9 +260,8 @@ public class MainActivity extends FragmentActivity
 			@Override
 			public void run() {
 				dialog.cancel();
-				mRobotFinder.stopDiscovery();    				
-				DialogFragment selectBluetoothDeviceDialogFragment = new SelectBluetoothDeviceDialogFragment(mDiscoveredBtDevices);
-				selectBluetoothDeviceDialogFragment.show(getSupportFragmentManager(), "SelectDiscoveredDeviceDialog");
+				mRobotFinder.stopDiscovery();
+				mFindRobotFragment.promptToConnectToDiscoveredDevices();
 			}
 		}, 1000 * 10);
     }

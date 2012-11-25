@@ -25,6 +25,10 @@
     <string name="ControlRobotTurnLeft">Left</string>   
     <string name="ControlRobotTurnRight">Right</string>
     <string name="ControlRobotCalibrate">Calibrate</string>
+    <string name="ControlRobotSpeedSlowRadio">Slow</string>
+    <string name="ControlRobotSpeedMediumRadio">Medium</string>
+    <string name="ControlRobotSpeedFastRadio">Fast</string>
+    <!--  -->
     
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
