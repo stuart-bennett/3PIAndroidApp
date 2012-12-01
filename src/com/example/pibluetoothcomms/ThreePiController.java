@@ -5,9 +5,11 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.pibluetoothcomms.ThreePiController.MovementSpeed;
+
 import android.bluetooth.BluetoothSocket;
 
-public class ThreePiController {
+public class ThreePiController implements IControlThreePi {
 	
 	public enum MovementSpeed {
 		STOP,

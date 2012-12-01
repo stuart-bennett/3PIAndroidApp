@@ -34,17 +34,22 @@ import com.example.pibluetoothcomms.Threading.EstablishBluetoothConnectionThread
 public class MainActivity extends FragmentActivity 
 	implements SelectBluetoothDeviceDialogListener {
 
+	private boolean mIsTestMode;
+	
 	private RobotFinder mRobotFinder;
-	private EstablishBluetoothConnectionThread mConnectionThread;
 	
 	// Devices discovered during bluetooth discovery
 	private Set<BluetoothDevice> mDiscoveredBtDevices;
 	
 	// For managing comms with the 3Pi once connected
-	private ThreePiController mRobotController;
+	private IControlThreePi mRobotController;
 
 	// The find robot fragment
 	private FindRobotFragment mFindRobotFragment;
+	
+	// Bluetooth Connection Manager
+	private IBluetoothConnectionManager mBluetoothConnectionManager;
+	
 	
 	// Handles bluetooth device discovery
 	private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -53,12 +58,12 @@ public class MainActivity extends FragmentActivity
     		String action = intent.getAction();	
     		if (BluetoothDevice.ACTION_FOUND.equals(action)) {
     			BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);	
-    			mFindRobotFragment.DeviceDiscovered(device);
-    			// mDiscoveredBtDevices.add(device);			
+    			mFindRobotFragment.DeviceDiscovered(device);	
     		}
     	}
     };
     
+    // Handles bluetooth connectivity events
     private final Handler mBluetoothConnectionHandler = new Handler() {
     	public void handleMessage(Message msg) { 		
     		Bundle data = msg.getData();
@@ -77,7 +82,13 @@ public class MainActivity extends FragmentActivity
     	FindRobotFragment findRobotFragment = (FindRobotFragment)manager.findFragmentById(R.id.find_robot_fragment);
     	findRobotFragment.BluetoothDeviceConnected(nameOfDeviceConnectedTo);
     	this.showRobotControls();
-    	this.mRobotController = new ThreePiController(this.mConnectionThread.getSocket());
+    	
+    	if (this.mIsTestMode) {
+    		this.mRobotController = new DummyThreePiController();
+    	}
+    	else {
+        	this.mRobotController = new ThreePiController(this.mBluetoothConnectionManager.getSocketToDevice());
+    	}
     }
     
     /**
@@ -94,7 +105,15 @@ public class MainActivity extends FragmentActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);     
-        setContentView(R.layout.activity_main);         
+        setContentView(R.layout.activity_main);
+        
+    	this.mIsTestMode = false;
+        if (this.mIsTestMode) {
+            this.mBluetoothConnectionManager = new FakeBluetoothConnectionManager(this.mBluetoothConnectionHandler);        	
+        }
+        else {
+            this.mBluetoothConnectionManager = new BluetoothConnectionManager(this.mBluetoothConnectionHandler);         	
+        }
         
         this.mDiscoveredBtDevices = new HashSet<BluetoothDevice>();
         this.registerBluetoothDiscoveryIntent();
@@ -125,7 +144,7 @@ public class MainActivity extends FragmentActivity
     			throw new RuntimeException(String.format("Could not find device '%s'", nameOfSelectedDevice));
     		}
     		
-    		this.doConnectToDevice(device);
+    		this.mBluetoothConnectionManager.connectToDevice(device);
     	}
     }	    
     
@@ -161,6 +180,7 @@ public class MainActivity extends FragmentActivity
 	}
 	
 	public void onControlRobotTurnLeftButton (View v) {
+		
 		this.mRobotController.turnLeft();
 	}
 
@@ -186,7 +206,7 @@ public class MainActivity extends FragmentActivity
     }
    
 	public void onDisconnectFromDeviceButton(View v) {
-		this.mConnectionThread.cancel();
+		this.mBluetoothConnectionManager.disconnectFromDevice();
     	FragmentManager manager = this.getSupportFragmentManager();
     	FindRobotFragment findRobotFragment = (FindRobotFragment)manager.findFragmentById(R.id.find_robot_fragment);
     	findRobotFragment.BluetoothDeviceDisconnected();
@@ -231,20 +251,7 @@ public class MainActivity extends FragmentActivity
     	
     	return new UiActionResult(true);
     }
-    
-    /**
-     * Connects to Bluetooth Device
-     * @param device
-     */
-    private void doConnectToDevice(BluetoothDevice device) {
-    	
-    	this.mConnectionThread = new EstablishBluetoothConnectionThread(
-    			BluetoothAdapter.getDefaultAdapter(), 
-    			device, 
-    			"00001101-0000-1000-8000-00805F9B34FB",
-    			this.mBluetoothConnectionHandler);
-    	this.mConnectionThread.run();
-    }
+        
     
     /**
      * Shows device discovery dialog and makes necessary calls for discovering devices

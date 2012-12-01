@@ -14,29 +14,43 @@ public final class R {
         public static final int FindRobotTextWhite=0x7f060000;
     }
     public static final class drawable {
-        public static final int ic_action_search=0x7f020000;
-        public static final int ic_launcher=0x7f020001;
+        public static final int background=0x7f020000;
+        public static final int backward_button_selector=0x7f020001;
+        public static final int down_arrow_lit=0x7f020002;
+        public static final int embossed_down_arrow=0x7f020003;
+        public static final int embossed_left_arrow=0x7f020004;
+        public static final int embossed_right_arrow=0x7f020005;
+        public static final int embossed_up_arrow=0x7f020006;
+        public static final int forward_button_selector=0x7f020007;
+        public static final int ic_action_search=0x7f020008;
+        public static final int ic_launcher=0x7f020009;
+        public static final int imageselector=0x7f02000a;
+        public static final int left_arrow_lit=0x7f02000b;
+        public static final int left_button_selector=0x7f02000c;
+        public static final int right_arrow_lit=0x7f02000d;
+        public static final int right_button_selector=0x7f02000e;
+        public static final int stainlesssteel=0x7f02000f;
+        public static final int up_arrow_lit=0x7f020010;
     }
     public static final class id {
-        public static final int ConnectedBtDeviceName=0x7f08000b;
-        public static final int ConnectedBtDeviceTimeConnectedAt=0x7f08000c;
-        public static final int ConnectedRobotLinearLayout=0x7f08000a;
-        public static final int ControlRobotBackwardButton=0x7f080003;
-        public static final int ControlRobotCalibrateButton=0x7f080006;
+        public static final int ConnectedBtDeviceName=0x7f08000c;
+        public static final int ConnectedRobotLinearLayout=0x7f08000b;
+        public static final int ControlRobotBackwardButton=0x7f080006;
+        public static final int ControlRobotCalibrateButton=0x7f080007;
         public static final int ControlRobotForwardButton=0x7f080002;
-        public static final int ControlRobotSpeedFastRadio=0x7f080009;
-        public static final int ControlRobotSpeedMediumRadio=0x7f080008;
-        public static final int ControlRobotSpeedSlowRadio=0x7f080007;
+        public static final int ControlRobotSpeedFastRadio=0x7f08000a;
+        public static final int ControlRobotSpeedMediumRadio=0x7f080009;
+        public static final int ControlRobotSpeedSlowRadio=0x7f080008;
         public static final int ControlRobotTurnLeftButton=0x7f080004;
         public static final int ControlRobotTurnRightButton=0x7f080005;
-        public static final int DisconnectDeviceLinearLayout=0x7f080010;
-        public static final int DisconnectFromDeviceButton=0x7f080011;
-        public static final int FindRobotButton=0x7f08000f;
+        public static final int DisconnectDeviceLinearLayout=0x7f08000f;
+        public static final int DisconnectFromDeviceButton=0x7f080010;
+        public static final int FindRobotButton=0x7f08000e;
         public static final int FindRobotLinearLayout=0x7f08000d;
-        public static final int FindRobotText=0x7f08000e;
         public static final int control_robot_fragment=0x7f080001;
         public static final int find_robot_fragment=0x7f080000;
-        public static final int menu_settings=0x7f080012;
+        public static final int menu_settings=0x7f080011;
+        public static final int tableRow1=0x7f080003;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;

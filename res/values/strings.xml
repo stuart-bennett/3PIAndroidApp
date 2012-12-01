@@ -8,9 +8,9 @@
     
     <!-- Find robot activity -->
     <string name="FindRobotCommand">Find Robot &#8230;</string>
-    <string name="FindRobotButtonText">Go!</string>
+    <string name="FindRobotButtonText">Search</string>
 	<string name="NoDeviceConnected">No Device Connected</string>
-	<string name="DisconnectFromDeviceButton">Disconnect from this device</string>
+	<string name="DisconnectFromDeviceButton">Disconnect</string>
     
     <!-- Select Previous BT Device  -->
     <string name="SelectPreviousBtDeviceTitle">Any of these?</string>

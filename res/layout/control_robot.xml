@@ -1,31 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <Button android:id="@+id/ControlRobotForwardButton"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"        
-        	android:text="@string/ControlRobotForward"
-        	android:onClick="onControlRobotForwardButton" />
+    android:layout_height="match_parent"
+    android:background="@drawable/stainlesssteel">"
     
-    <Button android:id="@+id/ControlRobotBackwardButton"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content" 
-        	android:text="@string/ControlRobotBackward"
-        	android:onClick="onControlRobotBackwardButton" />
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" >
 
-    <Button android:id="@+id/ControlRobotTurnLeftButton"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content" 
-        	android:text="@string/ControlRobotTurnLeft"
-        	android:onClick="onControlRobotTurnLeftButton" />
-    
-    <Button android:id="@+id/ControlRobotTurnRightButton"
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content" 
-        	android:text="@string/ControlRobotTurnRight"
-        	android:onClick="onControlRobotTurnRightButton" />
+       <TableRow android:layout_gravity="center_horizontal" >
+
+        <ToggleButton
+            android:id="@+id/ControlRobotForwardButton"
+	        android:onClick="onControlRobotForwardButton"            
+            android:layout_gravity="center|center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/forward_button_selector"
+            android:height="54dp"
+            android:textOff=""
+            android:textOn=""
+            android:width="57dp" />
+		
+        </TableRow>
+        
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+	        <ToggleButton
+	            android:id="@+id/ControlRobotTurnLeftButton"
+	            android:layout_gravity="center"
+	            android:layout_marginLeft="20dp"
+	            android:background="@drawable/left_button_selector"
+	            android:height="54dp"
+	            android:onClick="onControlRobotTurnLeftButton"
+	            android:textOff=""
+	            android:textOn=""
+	            android:width="57dp" />
+
+	        <ToggleButton
+	            android:id="@+id/ControlRobotTurnRightButton"
+	            android:layout_gravity="center"
+	            android:layout_marginLeft="20dp"
+	            android:background="@drawable/right_button_selector"
+	            android:height="54dp"
+	            android:onClick="onControlRobotTurnRightButton"
+	            android:textOff=""
+	            android:textOn=""
+	            android:width="57dp" />
+
+        </TableRow>
+
+       <TableRow android:layout_gravity="center" >        
+        
+	        <ToggleButton
+	            android:id="@+id/ControlRobotBackwardButton"
+	            android:layout_gravity="center"
+	            android:layout_marginBottom="20dp"
+	            android:layout_marginTop="20dp"
+	            android:background="@drawable/backward_button_selector"
+	            android:height="54dp"
+	            android:onClick="onControlRobotBackwardButton"
+	            android:textOff=""
+	            android:textOn=""
+	            android:width="57dp" />
+        
+	   </TableRow>
+	        
+    </TableLayout>    
     
     <Button android:id="@+id/ControlRobotCalibrateButton"
         	android:layout_width="wrap_content"
@@ -56,6 +100,5 @@
             		 android:onClick="onControlRobotSpeedFastRadioClicked" />
         
     </RadioGroup>
-    
 
 </LinearLayout>

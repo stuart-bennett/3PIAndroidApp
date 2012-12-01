@@ -2,8 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-
+    android:orientation="vertical"
+    android:background="@drawable/background">
+    
 	<fragment
 	    android:id="@+id/find_robot_fragment"
 	    android:name="com.example.pibluetoothcomms.Fragments.FindRobotFragment"
@@ -12,10 +13,15 @@
 	    class="com.example.pibluetoothcomms.Fragments.FindRobotFragment"
 	    tools:layout="@layout/find_robot" />
 
-	<fragment android:name="com.example.pibluetoothcomms.Fragments.ControlRobotFragment"
-    	  android:id="@+id/control_robot_fragment"
-          android:layout_width="wrap_content"
-          android:layout_height="match_parent"
-   		  class="com.example.pibluetoothcomms.Fragments.ControlRobotFragment" />    
+	<fragment
+	    android:id="@+id/control_robot_fragment"
+	    android:name="com.example.pibluetoothcomms.Fragments.ControlRobotFragment"
+	    android:layout_width="wrap_content"
+	    android:layout_height="match_parent"
+	    android:layout_marginBottom="30dp"
+	    android:layout_marginLeft="30dp"
+	    android:layout_marginRight="30dp"
+	    android:layout_marginTop="30dp"
+	    class="com.example.pibluetoothcomms.Fragments.ControlRobotFragment" />
     
 </LinearLayout>

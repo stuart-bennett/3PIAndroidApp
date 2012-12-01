@@ -5,8 +5,11 @@ import com.example.pibluetoothcomms.R;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class ControlRobotFragment extends Fragment {
@@ -19,5 +22,5 @@ public class ControlRobotFragment extends Fragment {
 		
 		return layoutInflater.inflate(R.layout.control_robot, container, false);
 	}
-
+	
 }
